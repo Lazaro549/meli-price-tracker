@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meli Price Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#333}
+    header{background:#ffe600;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+    header h1{font-size:1.3rem}
+    header small{font-size:.8rem;color:#555}
+    main{max-width:860px;margin:2rem auto;padding:0 1rem}
+    .card{background:#fff;border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+    .card h3{margin-bottom:.3rem;font-size:1rem}
+    .card h3 a{color:#3483fa;text-decoration:none}
+    .stats{display:flex;gap:1.5rem;margin:.8rem 0;flex-wrap:wrap}
+    .stats div span{font-size:.78rem;color:#888;display:block}
+    .stats div strong{font-size:1.1rem}
+    canvas{max-height:150px;width:100%!important}
+    .empty{text-align:center;color:#aaa;padding:4rem}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📈 Meli Price Tracker</h1>
+    <small>Updated: 2026-04-20 06:08 UTC</small>
+  </header>
+  <main>
+    
+        <div class="card">
+          <h3><a href="https://meli.com" target="_blank">Producto de prueba</a></h3>
+          <div class="stats">
+            <div><span>Current</span><strong>ARS 780,000</strong></div>
+            <div><span>Min ever</span><strong style="color:#00a650">ARS 138,000</strong></div>
+            <div><span>vs min</span><strong style="color:#00a650">↓ 465.2%</strong></div>
+            <div><span>Alert at</span><strong>-5.0%</strong></div>
+          </div>
+          <canvas id="chart-MLA1234567890"></canvas>
+          <script>
+            (function() {
+              var d = {"labels": ["2026-04-20 05:44", "2026-04-20 05:44", "2026-04-20 05:44", "2026-04-20 06:08", "2026-04-20 06:08", "2026-04-20 06:08", "2026-04-20 06:08", "2026-04-20 06:08"], "prices": [150000.0, 142000.0, 138000.0, 850000.0, 840000.0, 820000.0, 800000.0, 780000.0]};
+              new Chart(document.getElementById("chart-MLA1234567890"), {
+                type: "line",
+                data: {
+                  labels: d.labels,
+                  datasets: [{ label: "Price", data: d.prices,
+                    borderColor: "#3483fa", backgroundColor: "rgba(52,131,250,.08)",
+                    fill: true, tension: 0.3, pointRadius: 2 }]
+                },
+                options: {
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: { ticks: { maxTicksLimit: 6, font: { size: 10 } } },
+                    y: { ticks: { font: { size: 10 } } }
+                  }
+                }
+              });
+            })();
+          </script>
+        </div>
+  </main>
+</body>
+</html>
