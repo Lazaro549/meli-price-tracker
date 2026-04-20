@@ -1,5 +1,4 @@
 # 📈 Meli Price Tracker
-🌐 Live dashboard: https://lazaro549.github.io/meli-price-tracker/
 > Track Mercado Libre product prices over time and get notified when they drop.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
