@@ -1,4 +1,5 @@
 # 📈 Meli Price Tracker
+
 > Track Mercado Libre product prices over time and get notified when they drop.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
@@ -6,6 +7,15 @@
 ![SQLite](https://img.shields.io/badge/SQLite-embedded-blue?logo=sqlite)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-in%20development-orange)
+[![Live Dashboard](https://img.shields.io/badge/Live%20Dashboard-GitHub%20Pages-blue?logo=github)](https://lazaro549.github.io/meli-price-tracker/)
+
+---
+
+## 🌐 Live Dashboard
+
+**[lazaro549.github.io/meli-price-tracker](https://lazaro549.github.io/meli-price-tracker/)**
+
+> Updated automatically every 6 hours via GitHub Actions — no server required.
 
 ---
 
@@ -126,7 +136,7 @@ EMAIL_RECEIVER=you@gmail.com
 - [ ] Compare sellers for the same product
 - [ ] Detect "was/now" promotional discounts
 - [ ] Docker + docker-compose support
-- [ ] GitHub Actions for serverless scheduling
+- [x] GitHub Actions for serverless scheduling + auto-deploy to GitHub Pages
 - [ ] PostgreSQL support for production deploys
 
 ---
@@ -141,6 +151,8 @@ EMAIL_RECEIVER=you@gmail.com
 | Scheduler  | APScheduler             |
 | Dashboard  | Flask + Chart.js        |
 | Alerts     | smtplib / Telegram Bot  |
+| CI/CD      | GitHub Actions          |
+| Hosting    | GitHub Pages            |
 
 ---
 
