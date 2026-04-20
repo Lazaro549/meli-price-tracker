@@ -172,4 +172,4 @@ If this project saved you time or money, consider supporting it:
 
 ## 📄 License
 
-MIT © [Lazaro Gomez Vitolo](https://github.com/Lazaro549)# meli-price-tracker
+MIT © [Lazaro Gomez Vitolo](https://github.com/Lazaro549)

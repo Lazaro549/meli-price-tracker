@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meli Price Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
+    header { background: #ffe600; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
+    header h1 { font-size: 1.4rem; color: #333; }
+    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .add-form { background: white; border-radius: 10px; padding: 1.2rem 1.5rem; margin-bottom: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .add-form h2 { margin-bottom: .8rem; font-size: 1rem; }
+    .add-form form { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .add-form input { flex: 1; min-width: 200px; padding: .5rem .8rem; border: 1px solid #ddd; border-radius: 6px; font-size: .9rem; }
+    .add-form button { background: #ffe600; border: none; padding: .5rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .card { background: white; border-radius: 10px; padding: 1.2rem 1.5rem; margin-bottom: 1.2rem; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .card h3 { font-size: 1rem; margin-bottom: .4rem; }
+    .card a { color: #3483fa; text-decoration: none; font-size: .85rem; }
+    .prices { display: flex; gap: 2rem; margin: .8rem 0; }
+    .prices span { font-size: .85rem; color: #666; }
+    .prices strong { font-size: 1.2rem; color: #333; display: block; }
+    .prices .drop { color: #00a650; }
+    canvas { width: 100% !important; max-height: 160px; }
+    .empty { text-align: center; color: #999; padding: 3rem; }
+    label { font-size: .85rem; color: #666; align-self: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <span style="font-size:1.6rem">📈</span>
+    <h1>Meli Price Tracker</h1>
+  </header>
+  <main>
+    <div class="add-form">
+      <h2>Track a new product</h2>
+      <form method="POST" action="/add">
+        <input name="url_or_id" placeholder="MeLi URL or item ID (e.g. MLA1234567890)" required>
+        <label>Alert at</label>
+        <input name="threshold" type="number" value="5" min="1" max="80" style="max-width:70px"> %
+        <button type="submit">+ Add</button>
+      </form>
+    </div>
+
+    {% if products %}
+      {% for p in products %}
+      <div class="card">
+        <h3>{{ p.title }}</h3>
+        <a href="{{ p.url }}" target="_blank">View on Mercado Libre ↗</a>
+        <div class="prices">
+          <div>
+            <span>Current price</span>
+            <strong>{{ "ARS {:,.0f}".format(p.current) if p.current else "—" }}</strong>
+          </div>
+          <div>
+            <span>Historical min</span>
+            <strong class="drop">{{ "ARS {:,.0f}".format(p.minimum) if p.minimum else "—" }}</strong>
+          </div>
+          <div>
+            <span>Alert threshold</span>
+            <strong>-{{ p.threshold }}%</strong>
+          </div>
+        </div>
+        {% if p.history | length > 1 %}
+        <canvas id="chart-{{ p.item_id }}"></canvas>
+        <script>
+          new Chart(document.getElementById("chart-{{ p.item_id }}"), {
+            type: "line",
+            data: {
+              labels: {{ p.history | map(attribute='timestamp') | list | tojson }},
+              datasets: [{
+                label: "Price",
+                data: {{ p.history | map(attribute='price') | list | tojson }},
+                borderColor: "#3483fa",
+                backgroundColor: "rgba(52,131,250,.08)",
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+              }]
+            },
+            options: {
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { ticks: { maxTicksLimit: 6, font: { size: 10 } } },
+                y: { ticks: { font: { size: 10 } } }
+              }
+            }
+          });
+        </script>
+        {% else %}
+        <p style="color:#aaa;font-size:.85rem;margin-top:.5rem">Not enough data yet — check back after the next fetch.</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">No products tracked yet. Add one above ☝️</div>
+    {% endif %}
+  </main>
+</body>
+</html>
