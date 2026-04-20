@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Meli Price Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; background: #f9f9f9; }
+    h1 { color: #ffe600; background: #1a1a2e; padding: 16px 24px; border-radius: 8px; }
+    .card { background: white; border-radius: 8px; padding: 24px; margin: 16px 0; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; width: 260px; }
+    button { padding: 8px 16px; background: #ffe600; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    select { padding: 8px; border-radius: 6px; border: 1px solid #ddd; }
+    #status { margin-top: 8px; font-size: 14px; color: #555; }
+  </style>
+</head>
+<body>
+  <h1>📈 Meli Price Tracker</h1>
+
+  <div class="card">
+    <h3>Add product</h3>
+    <input id="itemInput" placeholder="Item ID (e.g. MLA1234567890)" />
+    <button onclick="addItem()">Track</button>
+    <div id="status"></div>
+  </div>
+
+  <div class="card">
+    <h3>Price history</h3>
+    <select id="itemSelect" onchange="loadChart()">
+      {% for item in items %}
+        <option value="{{ item }}">{{ item }}</option>
+      {% endfor %}
+    </select>
+    <canvas id="chart" style="margin-top:24px"></canvas>
+  </div>
+
+  <script>
+    let chart;
+
+    async function loadChart() {
+      const id = document.getElementById("itemSelect").value;
+      if (!id) return;
+      const res = await fetch(`/api/history/${id}`);
+      const data = await res.json();
+      const labels = data.map(d => d.recorded_at.slice(0, 16));
+      const prices = data.map(d => d.price);
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById("chart"), {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{ label: "Price", data: prices, borderColor: "#ffe600",
+            backgroundColor: "rgba(255,230,0,0.1)", tension: 0.3, fill: true }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+    }
+
+    async function addItem() {
+      const item_id = document.getElementById("itemInput").value.trim();
+      document.getElementById("status").textContent = "Adding...";
+      const res = await fetch("/api/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item_id })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        document.getElementById("status").textContent = `✓ Added: ${data.title}`;
+        const sel = document.getElementById("itemSelect");
+        const opt = new Option(item_id, item_id);
+        sel.add(opt);
+        sel.value = item_id;
+        loadChart();
+      } else {
+        document.getElementById("status").textContent = `✗ Error: ${data.error}`;
+      }
+    }
+
+    window.onload = loadChart;
+  </script>
+</body>
+</html>
